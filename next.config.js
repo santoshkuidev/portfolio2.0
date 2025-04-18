@@ -6,6 +6,7 @@ const nextConfig = {
     unoptimized: true,
   },
   basePath: process.env.NODE_ENV === 'production' ? '/portfolio2.0' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/portfolio2.0' : '',
   trailingSlash: true,
   eslint: {
     // Warning: This allows production builds to successfully complete even if

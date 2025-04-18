@@ -196,7 +196,7 @@ export default function HeroSection() {
             >
               <Avatar
                 alt="Developer"
-                src="/p-2.png" 
+                src="./p-2.png" 
                 sx={{
                   width: '100%',
                   height: '100%',
