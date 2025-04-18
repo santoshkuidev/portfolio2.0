@@ -22,6 +22,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import { contactInfo } from '../contactInfo';
 
 export default function ContactSection() {
   const theme = useTheme();
@@ -63,27 +64,38 @@ export default function ContactSection() {
     return !Object.values(newErrors).some(Boolean);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (validateForm()) {
-      // Here you would normally send the form data to your backend
-      console.log('Form submitted:', formData);
-      
-      // Show success message
-      setSnackbar({
-        open: true,
-        message: 'Message sent successfully! I\'ll get back to you soon.',
-        severity: 'success',
-      });
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
-      });
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+        const data = await res.json();
+        if (data.ok) {
+          setSnackbar({
+            open: true,
+            message: "Message sent successfully! I'll get back to you soon.",
+            severity: 'success',
+          });
+          setFormData({ name: '', email: '', subject: '', message: '' });
+        } else {
+          setSnackbar({
+            open: true,
+            message: 'Failed to send message. Please try again later.',
+            severity: 'error',
+          });
+        }
+      } catch (error) {
+        setSnackbar({
+          open: true,
+          message: 'Failed to send message. Please try again later.',
+          severity: 'error',
+        });
+      }
     } else {
       setSnackbar({
         open: true,
@@ -97,24 +109,26 @@ export default function ContactSection() {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
-  const contactInfo = [
+  const contactDetails = [
     {
       icon: <EmailIcon />,
       title: 'Email',
-      content: 'hello@yourname.com',
-      link: 'mailto:hello@yourname.com',
+      content: contactInfo.email,
+      link: `mailto:${contactInfo.email}`,
     },
-    {
-      icon: <LocationOnIcon />,
-      title: 'Location',
-      content: 'San Francisco, CA',
-      link: undefined,
-    },
+    // Location can be added to contactInfo if desired
+    // {
+    //   icon: <LocationOnIcon />,
+    //   title: 'Location',
+    //   content: contactInfo.location,
+    //   link: undefined,
+    // },
     {
       icon: <PhoneIcon />,
       title: 'Phone',
-      content: '+1 (555) 123-4567',
-      link: 'tel:+15551234567',
+      content: contactInfo.phone,
+      link: `tel:${contactInfo.phone.replace(/[^\d+]/g, '')}`,
+
     },
   ];
 
@@ -122,17 +136,12 @@ export default function ContactSection() {
     {
       icon: <GitHubIcon />,
       name: 'GitHub',
-      link: 'https://github.com/yourusername',
+      link: contactInfo.github,
     },
     {
       icon: <LinkedInIcon />,
       name: 'LinkedIn',
-      link: 'https://linkedin.com/in/yourusername',
-    },
-    {
-      icon: <TwitterIcon />,
-      name: 'Twitter',
-      link: 'https://twitter.com/yourusername',
+      link: contactInfo.linkedin,
     },
   ];
 
@@ -338,29 +347,9 @@ export default function ContactSection() {
                   Feel free to reach out through any of the following methods:
                 </Typography>
                 <Box sx={{ mt: 3 }}>
-                  {contactInfo.map((info, index) => (
-                    <Box
-                      key={index}
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        mb: 3,
-                      }}
-                    >
-                        <Box
-                          sx={{
-                            width: 48,
-                            height: 48,
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            background: theme.palette.mode === 'dark'
-                              ? 'rgba(255, 255, 255, 0.05)'
-                              : 'rgba(0, 0, 0, 0.03)',
-                            color: theme.palette.primary.main,
-                            mr: 2,
-                          }}
+                  {contactDetails.map((info, idx) => (
+                    <Box key={idx} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                      <Box
                         >
                           {info.icon}
                         </Box>

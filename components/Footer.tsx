@@ -15,6 +15,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { contactInfo } from '../contactInfo';
 
 export default function Footer() {
   const theme = useTheme();
@@ -68,7 +69,7 @@ export default function Footer() {
               <IconButton
                 aria-label="GitHub"
                 component="a"
-                href="https://github.com/yourusername"
+                href={contactInfo.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 size="small"
@@ -82,7 +83,7 @@ export default function Footer() {
               <IconButton
                 aria-label="LinkedIn"
                 component="a"
-                href="https://linkedin.com/in/yourusername"
+                href={contactInfo.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 size="small"
@@ -92,20 +93,6 @@ export default function Footer() {
                 }}
               >
                 <LinkedInIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                aria-label="Twitter"
-                component="a"
-                href="https://twitter.com/yourusername"
-                target="_blank"
-                rel="noopener noreferrer"
-                size="small"
-                sx={{ 
-                  color: theme.palette.text.secondary,
-                  '&:hover': { color: theme.palette.primary.main } 
-                }}
-              >
-                <TwitterIcon fontSize="small" />
               </IconButton>
             </Box>
           </Grid>
@@ -144,11 +131,9 @@ export default function Footer() {
               Contact
             </Typography>
             <Typography variant="body2" color="text.secondary" paragraph>
-              Email: hello@yourname.com
+              Email: {contactInfo.email}
             </Typography>
-            <Typography variant="body2" color="text.secondary" paragraph>
-              Location: San Francisco, CA
-            </Typography>
+            {/* Add location to contactInfo if needed */}
             <Box sx={{ mt: 2 }}>
               <Link
                 href="#contact"
@@ -187,7 +172,7 @@ export default function Footer() {
         
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="body2" color="text.secondary">
-            © {currentYear} Your Name. All rights reserved.
+            © {currentYear} Santosh Kui. All rights reserved.
           </Typography>
           
           <IconButton

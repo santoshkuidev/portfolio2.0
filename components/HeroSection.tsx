@@ -15,16 +15,12 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import { contactInfo } from '../contactInfo';
 
 // Simple social media icon button component
-function IconButton({ github, linkedin, twitter }: { github?: boolean, linkedin?: boolean, twitter?: boolean }) {
+// Social media icon button component using centralized contactInfo
+function IconButton({ url, Icon }: { url: string, Icon: React.ElementType }) {
   const theme = useTheme();
-  const Icon = github ? GitHubIcon : linkedin ? LinkedInIcon : TwitterIcon;
-  const url = github 
-    ? 'https://github.com/yourusername' 
-    : linkedin 
-      ? 'https://linkedin.com/in/yourusername' 
-      : 'https://twitter.com/yourusername';
   
   return (
     <Box
@@ -170,9 +166,8 @@ export default function HeroSection() {
               </Stack>
 
               <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
-                <IconButton github />
-                <IconButton linkedin />
-                <IconButton twitter />
+                <IconButton url={contactInfo.github} Icon={GitHubIcon} />
+                <IconButton url={contactInfo.linkedin} Icon={LinkedInIcon} />
               </Stack>
             </Box>
           </Box>
