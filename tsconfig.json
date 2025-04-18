@@ -30,15 +30,16 @@
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "next-env.d.ts",
-    "docs/types/**/*.ts",
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.tsx",
     ".next/types/**/*.ts",
-    "docs/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "docs/types/**/*.ts",
+    "docs/types/**/*.ts",
+    "next-env.d.ts",
+    "next-env.d.ts",
+    "out/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
