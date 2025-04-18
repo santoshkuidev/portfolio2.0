@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "export": "next export",
+    "deploy": "next build && touch docs/.nojekyll",
     "start": "next start",
     "lint": "next lint"
   },
