@@ -69,7 +69,8 @@ export default function ContactSection() {
     
     if (validateForm()) {
       try {
-        const res = await fetch('/api/contact', {
+        // Using the Vercel-deployed API endpoint
+        const res = await fetch('https://contact-api-two-cyan.vercel.app/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData),
