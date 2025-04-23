@@ -53,6 +53,7 @@ export default function ProjectsSection() {
   const carouselRef = useRef<HTMLDivElement>(null);
   // Scroll-jack effect state
   const [isScrollJackActive, setIsScrollJackActive] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
@@ -68,6 +69,7 @@ export default function ProjectsSection() {
       // Only hijack vertical scroll
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         e.preventDefault();
+        // Scroll horizontally through the cards
         carousel.scrollLeft += e.deltaY;
         // Release pin if at the end
         const maxScroll = carousel.scrollWidth - carousel.clientWidth;
@@ -78,6 +80,13 @@ export default function ProjectsSection() {
         }
       }
     };
+
+    // For visual feedback: scroll progress indicator
+    const onScroll = () => {
+      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+      setScrollProgress(carousel.scrollLeft / maxScroll);
+    };
+    carousel.addEventListener('scroll', onScroll);
 
     // IntersectionObserver for pinning
     const observer = new window.IntersectionObserver(
@@ -97,6 +106,7 @@ export default function ProjectsSection() {
     return () => {
       observer.disconnect();
       container.removeEventListener('wheel', onWheel);
+      carousel.removeEventListener('scroll', onScroll);
     };
   }, [isMobile]);
 
@@ -304,30 +314,76 @@ export default function ProjectsSection() {
           ref={carouselRef}
           sx={{
             display: 'flex',
-            justifyContent: 'center',
-            overflowX: 'auto',
-            overflowY: 'hidden',
-            scrollSnapType: 'x mandatory',
+            flexDirection: 'column',
+            alignItems: 'center',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            scrollSnapType: 'y mandatory',
             scrollBehavior: 'smooth',
-            gap: 3,
-            py: 2,
-            px: 1,
+            gap: 0,
+            py: 0,
+            px: 0,
+            width: '100vw',
+            maxHeight: '100vh',
+            position: 'relative',
+            left: '50%',
+            right: '50%',
+            transform: 'translateX(-50%)',
             '::-webkit-scrollbar': { display: 'none' },
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
           }}
         >
           {filteredProjects.map((project) => (
-            <Card key={project.id} sx={{ minWidth: isMobile ? 260 : 340, maxWidth: isMobile ? 320 : 400, flex: '0 0 auto', scrollSnapAlign: 'start', boxShadow: 4, borderRadius: 3, mx: 0.5, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.03)' } }}>
-              <CardMedia component="img" height="200" image={project.image || "https://source.unsplash.com/random/600x400/?tech"} alt={project.title} sx={{ objectFit: 'cover' }} />
-              <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <Typography variant="h5" component="h3" gutterBottom fontWeight={600}>
+            <Card
+              key={project.id}
+              sx={{
+                minWidth: '100vw',
+                maxWidth: '100vw',
+                minHeight: '100vh',
+                maxHeight: '100vh',
+                flex: '0 0 auto',
+                scrollSnapAlign: 'start',
+                boxShadow: 4,
+                borderRadius: 0,
+                mx: 0,
+                my: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'stretch',
+                transition: 'transform 0.2s',
+                overflow: 'hidden',
+              }}
+            >
+              <CardMedia
+                component="img"
+                sx={{
+                  width: isMobile ? '100%' : '50vw',
+                  height: isMobile ? 200 : '100vh',
+                  objectFit: 'cover',
+                }}
+                image={project.image || "https://source.unsplash.com/random/600x400/?tech"}
+                alt={project.title}
+              />
+              <CardContent
+                sx={{
+                  flexGrow: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: isMobile ? 'flex-start' : 'center',
+                  px: isMobile ? 2 : 8,
+                  py: isMobile ? 2 : 0,
+                  width: isMobile ? '100%' : '50vw',
+                }}
+              >
+                <Typography variant="h3" component="h3" gutterBottom fontWeight={800} textAlign={isMobile ? 'left' : 'center'}>
                   {project.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" paragraph sx={{ mb: 2 }}>
+                <Typography variant="body1" color="text.secondary" paragraph sx={{ mb: 2, textAlign: isMobile ? 'left' : 'center' }}>
                   {project.description}
                 </Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2, justifyContent: isMobile ? 'flex-start' : 'center' }}>
                   {project.technologies.slice(0, 4).map((tech) => (
                     <Chip key={tech} label={tech} size="small" />
                   ))}
@@ -336,6 +392,7 @@ export default function ProjectsSection() {
             </Card>
           ))}
         </Box>
+
 
         <Box sx={{ textAlign: 'center', mt: 6 }}>
           <Button variant="outlined" color="primary" size="large" endIcon={<ArrowForwardIcon />} sx={{ borderRadius: 2, px: 4, py: 1.5, fontWeight: 600, borderWidth: 2 }}>

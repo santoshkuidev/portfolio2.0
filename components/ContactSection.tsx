@@ -336,36 +336,35 @@ export default function ContactSection() {
                 <Box sx={{ mt: 3 }}>
                   {contactDetails.map((info, idx) => (
                     <Box key={idx} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Box
-                        >
-                          {info.icon}
-                        </Box>
-                        <Box>
-                          <Typography variant="subtitle2" fontWeight={600}>
-                            {info.title}
-                          </Typography>
-                          {info.link ? (
-                            <Link
-                              href={info.link}
-                              color="inherit"
-                              underline="hover"
-                              sx={{
-                                color: theme.palette.text.secondary,
-                                '&:hover': {
-                                  color: theme.palette.primary.main,
-                                },
-                              }}
-                            >
-                              {info.content}
-                            </Link>
-                          ) : (
-                            <Typography variant="body2" color="textSecondary">
-                              {info.content}
-                            </Typography>
-                          )}
-                        </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mr: 2, minWidth: 32, justifyContent: 'center' }}>
+                        {info.icon}
                       </Box>
-                    ))}
+                      <Box>
+                        <Typography variant="subtitle2" fontWeight={600}>
+                          {info.title}
+                        </Typography>
+                        {info.link ? (
+                          <Link
+                            href={info.link}
+                            color="inherit"
+                            underline="hover"
+                            sx={{
+                              color: theme.palette.text.secondary,
+                              '&:hover': {
+                                color: theme.palette.primary.main,
+                              },
+                            }}
+                          >
+                            {info.content}
+                          </Link>
+                        ) : (
+                          <Typography variant="body2" color="textSecondary">
+                            {info.content}
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+                  ))}
                   </Box>
                 </Paper>
 
