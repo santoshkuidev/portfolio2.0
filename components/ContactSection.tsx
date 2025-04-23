@@ -210,7 +210,7 @@ export default function ContactSection() {
           </Typography>
         </Box>
 
-        <Grid container spacing={4}>
+        <Grid container spacing={4} justifyContent="center">
           {/* Contact Form */}
           <Grid item xs={12} md={7}>
             <Paper
@@ -218,113 +218,99 @@ export default function ContactSection() {
               sx={{
                 p: 4,
                 borderRadius: 4,
-                height: '100%',
-                position: 'relative',
-                overflow: 'hidden',
-                '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: 4,
-                  height: '100%',
-                  background: theme.palette.mode === 'dark'
-                    ? 'linear-gradient(180deg, #38bdf8, #818cf8)'
-                    : 'linear-gradient(180deg, #3a86ff, #8b5cf6)',
-                  zIndex: 1,
-                },
+                maxWidth: 420,
+                mx: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: 480,
               }}
             >
-              <Typography variant="h5" component="h3" fontWeight={600} gutterBottom>
+              <Typography variant="h5" component="h3" fontWeight={600} gutterBottom align="center">
                 Send Me a Message
               </Typography>
-              <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      required
-                      fullWidth
-                      label="Your Name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      error={errors.name}
-                      helperText={errors.name ? 'Name is required' : ''}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      required
-                      fullWidth
-                      label="Email Address"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      error={errors.email}
-                      helperText={errors.email ? 'Valid email is required' : ''}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      label="Message"
-                      name="message"
-                      multiline
-                      rows={4}
-                      value={formData.message}
-                      onChange={handleChange}
-                      error={errors.message}
-                      helperText={errors.message ? 'Message is required' : ''}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      size="large"
-                      endIcon={<SendIcon />}
-                      sx={{
-                        py: 1.5,
-                        px: 3,
-                        borderRadius: 2,
-                        fontWeight: 600,
-                        position: 'relative',
-                        overflow: 'hidden',
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          top: 0,
-                          left: '-100%',
-                          width: '100%',
-                          height: '100%',
-                          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                          transition: 'all 0.6s ease',
-                        },
-                        '&:hover::before': {
-                          left: '100%',
-                        },
-                      }}
-                    >
-                      Send Message
-                    </Button>
-                  </Grid>
-                </Grid>
+              <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2, width: '100%' }}>
+                <TextField
+                  required
+                  fullWidth
+                  label="Your Name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  error={errors.name}
+                  helperText={errors.name ? 'Name is required' : ''}
+                  variant="outlined"
+                  sx={{ mb: 3 }}
+                />
+                <TextField
+                  required
+                  fullWidth
+                  label="Email Address"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  error={errors.email}
+                  helperText={errors.email ? 'Valid email is required' : ''}
+                  variant="outlined"
+                  sx={{ mb: 3 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  variant="outlined"
+                  sx={{ mb: 3 }}
+                />
+                <TextField
+                  required
+                  fullWidth
+                  label="Message"
+                  name="message"
+                  multiline
+                  rows={4}
+                  value={formData.message}
+                  onChange={handleChange}
+                  error={errors.message}
+                  helperText={errors.message ? 'Message is required' : ''}
+                  variant="outlined"
+                  sx={{ mb: 4 }}
+                />
+                <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    endIcon={<SendIcon />}
+                    sx={{
+                      py: 1.5,
+                      px: 3,
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      position: 'relative',
+                      overflow: 'hidden',
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: '-100%',
+                        width: '100%',
+                        height: '100%',
+                        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                        transition: 'all 0.6s ease',
+                      },
+                      '&:hover::before': {
+                        left: '100%',
+                      },
+                    }}
+                  >
+                    Send Message
+                  </Button>
+                </Box>
               </Box>
             </Paper>
           </Grid>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { 
   Box, 
   Typography, 
@@ -19,7 +19,7 @@ import {
   Slide,
   useMediaQuery
 } from '@mui/material';
-import { TransitionProps } from '@mui/material/transitions';
+import { TransitionProps } from '@mui/material/Slide';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LaunchIcon from '@mui/icons-material/Launch';
 import CloseIcon from '@mui/icons-material/Close';
@@ -28,7 +28,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 // Transition for dialog
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
-    children: React.ReactElement;
+    children: React.ReactElement<any, any>;
   },
   ref: React.Ref<unknown>,
 ) {
@@ -49,8 +49,60 @@ interface Project {
 }
 
 export default function ProjectsSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  // Scroll-jack effect state
+  const [isScrollJackActive, setIsScrollJackActive] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
+  useEffect(() => {
+    if (isMobile) return;
+    const container = containerRef.current;
+    const carousel = carouselRef.current;
+    if (!container || !carousel) return;
+
+    // Handler for scroll-jack
+    const onWheel = (e: WheelEvent) => {
+      if (!isScrollJackActive) return;
+      // Only hijack vertical scroll
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        carousel.scrollLeft += e.deltaY;
+        // Release pin if at the end
+        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+        if (carousel.scrollLeft <= 0 && e.deltaY < 0) {
+          setIsScrollJackActive(false);
+        } else if (carousel.scrollLeft >= maxScroll && e.deltaY > 0) {
+          setIsScrollJackActive(false);
+        }
+      }
+    };
+
+    // IntersectionObserver for pinning
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsScrollJackActive(true);
+        } else {
+          setIsScrollJackActive(false);
+        }
+      },
+      {
+        threshold: 0.5,
+      }
+    );
+    observer.observe(container);
+    container.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      observer.disconnect();
+      container.removeEventListener('wheel', onWheel);
+    };
+  }, [isMobile]);
+
+
+
+  
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [filter, setFilter] = useState<string>('all');
 
@@ -146,12 +198,19 @@ export default function ProjectsSection() {
   };
 
   return (
-    <Box 
+    <Box
       id="projects"
+      ref={containerRef}
       sx={{
-        py: { xs: 8, md: 12 },
-        position: 'relative',
+        height: '100vh',
+        position: isMobile ? 'static' : 'sticky',
+        top: 0,
+        zIndex: 2,
         overflow: 'hidden',
+        background: theme.palette.background.default,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
       }}
     >
       {/* Simple background gradient instead of complex animation */}
@@ -220,7 +279,7 @@ export default function ProjectsSection() {
             justifyContent="center"
           >
             {categories.map((category) => (
-              <Grid item key={category}>
+              <Grid item xs={12} key={category}>
                 <Button
                   variant={filter === category ? 'contained' : 'outlined'}
                   onClick={() => setFilter(category)}
@@ -240,320 +299,93 @@ export default function ProjectsSection() {
             ))}
           </Grid>
         </Box>
-        
-        <Grid container spacing={4}>
-          {filteredProjects.map((project, index) => (
-            <Grid item xs={12} sm={6} md={4} key={project.id}>
-              <Box
-                sx={{
-                  height: '100%',
-                  transition: 'transform 0.3s ease-in-out',
-                  '&:hover': {
-                    transform: 'translateY(-8px)',
-                  },
-                }}
-              >
-                <Card
-                  sx={{
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    borderRadius: 4,
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: 4,
-                      background: theme.palette.mode === 'dark'
-                        ? 'linear-gradient(90deg, #38bdf8, #818cf8)'
-                        : 'linear-gradient(90deg, #3a86ff, #8b5cf6)',
-                      zIndex: 1,
-                    },
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={project.image || "https://source.unsplash.com/random/600x400/?tech"}
-                    alt={project.title}
-                    sx={{
-                      objectFit: 'cover',
-                    }}
-                  />
-                  <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                    <Typography variant="h5" component="h3" gutterBottom fontWeight={600}>
-                      {project.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" paragraph sx={{ mb: 2 }}>
-                      {project.description}
-                    </Typography>
-                    
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
-                      {project.technologies.slice(0, 4).map((tech) => (
-                        <Chip 
-                          key={tech} 
-                          label={tech} 
-                          size="small" 
-                          sx={{ 
-                            fontSize: '0.7rem',
-                            height: 24,
-                            bgcolor: theme.palette.mode === 'dark' 
-                              ? 'rgba(255, 255, 255, 0.05)' 
-                              : 'rgba(0, 0, 0, 0.05)',
-                          }} 
-                        />
-                      ))}
-                      {project.technologies.length > 4 && (
-                        <Chip 
-                          label={`+${project.technologies.length - 4}`} 
-                          size="small" 
-                          sx={{ 
-                            fontSize: '0.7rem',
-                            height: 24,
-                            bgcolor: theme.palette.mode === 'dark' 
-                              ? 'rgba(255, 255, 255, 0.05)' 
-                              : 'rgba(0, 0, 0, 0.05)',
-                          }} 
-                        />
-                      )}
-                    </Box>
-                    
-                    <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Button 
-                        variant="outlined" 
-                        size="small"
-                        onClick={() => handleOpenProject(project)}
-                        sx={{
-                          borderRadius: 2,
-                          fontWeight: 500,
-                        }}
-                      >
-                        View Details
-                      </Button>
-                      
-                      <Box>
-                        {project.githubUrl && (
-                          <IconButton 
-                            size="small" 
-                            aria-label="github repository"
-                            href={project.githubUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <GitHubIcon fontSize="small" />
-                          </IconButton>
-                        )}
-                        {project.demoUrl && (
-                          <IconButton 
-                            size="small" 
-                            aria-label="live demo"
-                            href={project.demoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            color="primary"
-                          >
-                            <LaunchIcon fontSize="small" />
-                          </IconButton>
-                        )}
-                      </Box>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Box>
-            </Grid>
+
+        <Box
+          ref={carouselRef}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            scrollSnapType: 'x mandatory',
+            scrollBehavior: 'smooth',
+            gap: 3,
+            py: 2,
+            px: 1,
+            '::-webkit-scrollbar': { display: 'none' },
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
+          {filteredProjects.map((project) => (
+            <Card key={project.id} sx={{ minWidth: isMobile ? 260 : 340, maxWidth: isMobile ? 320 : 400, flex: '0 0 auto', scrollSnapAlign: 'start', boxShadow: 4, borderRadius: 3, mx: 0.5, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.03)' } }}>
+              <CardMedia component="img" height="200" image={project.image || "https://source.unsplash.com/random/600x400/?tech"} alt={project.title} sx={{ objectFit: 'cover' }} />
+              <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <Typography variant="h5" component="h3" gutterBottom fontWeight={600}>
+                  {project.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" paragraph sx={{ mb: 2 }}>
+                  {project.description}
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+                  {project.technologies.slice(0, 4).map((tech) => (
+                    <Chip key={tech} label={tech} size="small" />
+                  ))}
+                </Box>
+              </CardContent>
+            </Card>
           ))}
-        </Grid>
-        
-        {/* View all projects button */}
+        </Box>
+
         <Box sx={{ textAlign: 'center', mt: 6 }}>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="large"
-            endIcon={<ArrowForwardIcon />}
-            sx={{
-              borderRadius: 2,
-              px: 4,
-              py: 1.5,
-              fontWeight: 600,
-              borderWidth: 2,
-            }}
-          >
+          <Button variant="outlined" color="primary" size="large" endIcon={<ArrowForwardIcon />} sx={{ borderRadius: 2, px: 4, py: 1.5, fontWeight: 600, borderWidth: 2 }}>
             View All Projects
           </Button>
         </Box>
       </Container>
 
-      {/* Project Details Dialog */}
-      <Dialog
-        open={!!selectedProject}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleCloseProject}
-        maxWidth="md"
-        fullWidth
-        fullScreen={isMobile}
-        PaperProps={{
-          sx: {
-            borderRadius: isMobile ? 0 : 4,
-            background: theme.palette.background.paper,
-            backgroundImage: 'none',
-          }
-        }}
-      >
-        {selectedProject && (
-          <>
-            <DialogTitle sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              pb: 1
-            }}>
-              <Typography variant="h5" component="div" fontWeight={600}>
+      <Dialog open={!!selectedProject} onClose={handleCloseProject} maxWidth="lg" fullWidth>
+        <DialogContent sx={{ p: 0 }}>
+          {selectedProject && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', p: 4 }}>
+              <Typography variant="h4" component="h2" gutterBottom>
                 {selectedProject.title}
               </Typography>
-              <IconButton edge="end" color="inherit" onClick={handleCloseProject} aria-label="close">
-                <CloseIcon />
-              </IconButton>
-            </DialogTitle>
-            <DialogContent dividers>
-              <Box>
-                {/* Project Image */}
-                <Box 
-                  sx={{ 
-                    height: 300, 
-                    bgcolor: 'grey.200',
-                    borderRadius: 2,
-                    mb: 3,
-                    overflow: 'hidden',
-                    position: 'relative',
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={selectedProject.image || "https://source.unsplash.com/random/1200x600/?tech"}
-                    alt={selectedProject.title}
-                    sx={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
-                      p: 2,
-                      display: 'flex',
-                      justifyContent: 'flex-end',
-                      gap: 1,
-                    }}
-                  >
-                    {selectedProject.githubUrl && (
-                      <IconButton 
-                        aria-label="github repository"
-                        href={selectedProject.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{ 
-                          color: 'white',
-                          bgcolor: 'rgba(0,0,0,0.3)',
-                          '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' },
-                        }}
-                      >
-                        <GitHubIcon />
-                      </IconButton>
-                    )}
-                    {selectedProject.demoUrl && (
-                      <IconButton 
-                        aria-label="live demo"
-                        href={selectedProject.demoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{ 
-                          color: 'white',
-                          bgcolor: 'rgba(0,0,0,0.3)',
-                          '&:hover': { bgcolor: 'rgba(0,0,0,0.5)' },
-                        }}
-                      >
-                        <LaunchIcon />
-                      </IconButton>
-                    )}
-                  </Box>
-                </Box>
-
-                {/* Project Description */}
-                <Typography variant="body1" paragraph>
-                  {selectedProject.longDescription}
-                </Typography>
-
-                {/* Technologies */}
-                <Typography variant="h6" gutterBottom sx={{ mt: 3, fontWeight: 600 }}>
-                  Technologies Used
-                </Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-                  {selectedProject.technologies.map((tech) => (
-                    <Chip 
-                      key={tech} 
-                      label={tech} 
-                      size="small" 
-                      color="primary" 
-                      variant="outlined"
-                    />
-                  ))}
-                </Box>
-
-                {/* Features */}
-                <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                  Key Features
-                </Typography>
-                <Box component="ul" sx={{ pl: 2 }}>
-                  {selectedProject.features.map((feature, index) => (
-                    <Typography component="li" key={index} paragraph>
-                      {feature}
-                    </Typography>
-                  ))}
-                </Box>
-
-                {/* Actions */}
-                <Box sx={{ display: 'flex', gap: 2, mt: 4, justifyContent: 'flex-end' }}>
-                  {selectedProject.githubUrl && (
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      startIcon={<GitHubIcon />}
-                      href={selectedProject.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View Code
-                    </Button>
-                  )}
-                  {selectedProject.demoUrl && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<LaunchIcon />}
-                      href={selectedProject.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Live Demo
-                    </Button>
-                  )}
-                </Box>
+              <Typography variant="body1" paragraph>
+                {selectedProject.longDescription}
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
+                {selectedProject.technologies.map((tech) => (
+                  <Chip key={tech} label={tech} size="small" color="primary" variant="outlined" />
+                ))}
               </Box>
-            </DialogContent>
-          </>
-        )}
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+                Key Features
+              </Typography>
+              <Box component="ul" sx={{ pl: 2 }}>
+                {selectedProject.features.map((feature, index) => (
+                  <Typography component="li" key={index} paragraph>
+                    {feature}
+                  </Typography>
+                ))}
+              </Box>
+              <Box sx={{ display: 'flex', gap: 2, mt: 4, justifyContent: 'flex-end' }}>
+                {selectedProject.githubUrl && (
+                  <Button variant="outlined" color="primary" startIcon={<GitHubIcon />} href={selectedProject.githubUrl} target="_blank" rel="noopener noreferrer">
+                    View Code
+                  </Button>
+                )}
+                {selectedProject.demoUrl && (
+                  <Button variant="contained" color="primary" startIcon={<LaunchIcon />} href={selectedProject.demoUrl} target="_blank" rel="noopener noreferrer">
+                    Live Demo
+                  </Button>
+                )}
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
       </Dialog>
     </Box>
   );
-}
+};
+

@@ -130,7 +130,7 @@ export default function HeroSection() {
                   lineHeight: 1.6,
                 }}
               >
-                I build innovative, responsive, and futuristic web applications that deliver amazing user experiences and push the boundaries of modern web technology.
+                I build innovative and responsive web applications that deliver amazing user experiences and push the boundaries of modern web technology.
               </Typography>
 
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -145,7 +145,13 @@ export default function HeroSection() {
                     borderRadius: 2,
                     fontWeight: 600,
                   }}
-                  href="#contact"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const el = document.getElementById('contact');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
                 >
                   Contact Me
                 </Button>

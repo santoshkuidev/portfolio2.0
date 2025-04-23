@@ -44,27 +44,8 @@ export default function Footer() {
       }}
     >
       <Container maxWidth="lg">
-        <Grid container spacing={4}>
+        <Grid container spacing={4} justifyContent="center">
           <Grid item xs={12} md={4}>
-            <Typography 
-              variant="h6" 
-              component="div" 
-              sx={{ 
-                fontWeight: 700, 
-                mb: 2,
-                background: theme.palette.mode === 'dark'
-                  ? 'linear-gradient(90deg, #38bdf8, #818cf8)' 
-                  : 'linear-gradient(90deg, #3a86ff, #8b5cf6)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              DEV PORTFOLIO
-            </Typography>
-            <Typography variant="body2" color="text.secondary" paragraph>
-              A showcase of my skills, projects, and professional journey as a developer and architect.
-              Built with React, Next.js, and Material UI.
-            </Typography>
             <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
               <IconButton
                 aria-label="GitHub"
@@ -170,7 +151,7 @@ export default function Footer() {
         
         <Divider sx={{ my: 4 }} />
         
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
             © {currentYear} Santosh Kui. All rights reserved.
           </Typography>
