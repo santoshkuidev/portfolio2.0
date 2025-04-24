@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   Box, 
   Typography, 
@@ -52,6 +52,36 @@ function IconButton({ url, Icon }: { url: string, Icon: React.ElementType }) {
 
 export default function HeroSection() {
   const theme = useTheme();
+  const splitParallaxRef = useRef<HTMLDivElement>(null);
+  const [parallax, setParallax] = useState(0);
+  const [animateHero, setAnimateHero] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setAnimateHero(true), 100);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!splitParallaxRef.current) return;
+      const rect = splitParallaxRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      // Only trigger when section is in or near viewport
+      if (rect.top > windowHeight || rect.bottom < 0) {
+        setParallax(0);
+        return;
+      }
+      // 0 when top in view, 1 when bottom leaves
+      const progress = Math.min(Math.max(1 - rect.bottom / windowHeight, 0), 1);
+      setParallax(progress);
+    };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
 
   return (
     <Box 
@@ -82,6 +112,7 @@ export default function HeroSection() {
 
       <Container maxWidth="lg">
         <Box
+          ref={splitParallaxRef}
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', md: 'row' },
@@ -91,7 +122,14 @@ export default function HeroSection() {
           }}
         >
           {/* Text content */}
-          <Box sx={{ flex: 1, maxWidth: { xs: '100%', md: '60%' } }}>
+          <Box
+            sx={{
+              flex: 1,
+              maxWidth: { xs: '100%', md: '60%' },
+              transition: 'transform 0.6s cubic-bezier(.4,0,.2,1)',
+              transform: { md: `translateX(${-parallax * 60}px)` },
+            }}
+          >
             <Box>
               <Typography
                 variant="overline"
@@ -101,6 +139,9 @@ export default function HeroSection() {
                   fontWeight: 600,
                   letterSpacing: 1.5,
                   mb: 1,
+                  opacity: animateHero ? 1 : 0,
+                  transform: animateHero ? 'none' : 'translateX(-40px)',
+                  transition: 'all 0.7s cubic-bezier(.4,0,.2,1) 0.1s',
                 }}
               >
                 LEADER | ARCHITECT | DEVELOPER | ENTHUSIAST
@@ -117,6 +158,9 @@ export default function HeroSection() {
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   lineHeight: 1.2,
+                  opacity: animateHero ? 1 : 0,
+                  transform: animateHero ? 'none' : 'translateX(-40px)',
+                  transition: 'all 0.7s cubic-bezier(.4,0,.2,1) 0.3s',
                 }}
               >
                 Creating Exceptional Digital Experiences
@@ -128,12 +172,19 @@ export default function HeroSection() {
                   mb: 4,
                   fontWeight: 400,
                   lineHeight: 1.6,
+                  opacity: animateHero ? 1 : 0,
+                  transform: animateHero ? 'none' : 'translateX(-40px)',
+                  transition: 'all 0.7s cubic-bezier(.4,0,.2,1) 0.5s',
                 }}
               >
                 I build innovative and responsive web applications that deliver amazing user experiences and push the boundaries of modern web technology.
               </Typography>
 
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{
+                opacity: animateHero ? 1 : 0,
+                transform: animateHero ? 'none' : 'translateX(-40px)',
+                transition: 'all 0.7s cubic-bezier(.4,0,.2,1) 0.7s',
+              }}>
                 <Button
                   variant="contained"
                   size="large"
@@ -171,7 +222,11 @@ export default function HeroSection() {
                 </Button>
               </Stack>
 
-              <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
+              <Stack direction="row" spacing={2} sx={{ mt: 4,
+                opacity: animateHero ? 1 : 0,
+                transform: animateHero ? 'none' : 'translateX(-40px)',
+                transition: 'all 0.7s cubic-bezier(.4,0,.2,1) 0.9s',
+              }}>
                 <IconButton url={contactInfo.github} Icon={GitHubIcon} />
                 <IconButton url={contactInfo.linkedin} Icon={LinkedInIcon} />
               </Stack>
@@ -184,6 +239,8 @@ export default function HeroSection() {
               flex: { xs: '0 0 100%', md: '0 0 40%' },
               display: 'flex',
               justifyContent: 'center',
+              transition: 'transform 0.6s cubic-bezier(.4,0,.2,1)',
+              transform: { md: `translateX(${parallax * 60}px)` },
             }}
           >
             <Paper

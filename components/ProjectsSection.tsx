@@ -19,10 +19,9 @@ import {
   Slide,
   useMediaQuery
 } from '@mui/material';
-import { TransitionProps } from '@mui/material/Slide';
+import { TransitionProps } from '@mui/material/transitions';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LaunchIcon from '@mui/icons-material/Launch';
-import CloseIcon from '@mui/icons-material/Close';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 // Transition for dialog
@@ -51,66 +50,24 @@ interface Project {
 export default function ProjectsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
-  // Scroll-jack effect state
-  const [isScrollJackActive, setIsScrollJackActive] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  // Snap state
+  const [isSnapActive, setIsSnapActive] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
+
+  // Only enable snap when section is fully in view
   useEffect(() => {
     if (isMobile) return;
-    const container = containerRef.current;
-    const carousel = carouselRef.current;
-    if (!container || !carousel) return;
-
-    // Handler for scroll-jack
-    const onWheel = (e: WheelEvent) => {
-      if (!isScrollJackActive) return;
-      // Only hijack vertical scroll
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        // Scroll horizontally through the cards
-        carousel.scrollLeft += e.deltaY;
-        // Release pin if at the end
-        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-        if (carousel.scrollLeft <= 0 && e.deltaY < 0) {
-          setIsScrollJackActive(false);
-        } else if (carousel.scrollLeft >= maxScroll && e.deltaY > 0) {
-          setIsScrollJackActive(false);
-        }
-      }
-    };
-
-    // For visual feedback: scroll progress indicator
-    const onScroll = () => {
-      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-      setScrollProgress(carousel.scrollLeft / maxScroll);
-    };
-    carousel.addEventListener('scroll', onScroll);
-
-    // IntersectionObserver for pinning
+    if (!containerRef.current) return;
     const observer = new window.IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsScrollJackActive(true);
-        } else {
-          setIsScrollJackActive(false);
-        }
+        setIsSnapActive(entry.intersectionRatio === 1);
       },
-      {
-        threshold: 0.5,
-      }
+      { threshold: 1 }
     );
-    observer.observe(container);
-    container.addEventListener('wheel', onWheel, { passive: false });
-    return () => {
-      observer.disconnect();
-      container.removeEventListener('wheel', onWheel);
-      carousel.removeEventListener('scroll', onScroll);
-    };
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
   }, [isMobile]);
-
-
 
   
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -318,7 +275,7 @@ export default function ProjectsSection() {
             alignItems: 'center',
             overflowY: 'auto',
             overflowX: 'hidden',
-            scrollSnapType: 'y mandatory',
+            scrollSnapType: isSnapActive ? 'y mandatory' : 'none',
             scrollBehavior: 'smooth',
             gap: 0,
             py: 0,
