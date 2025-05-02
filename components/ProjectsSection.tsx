@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Box, 
   Typography, 
@@ -12,27 +12,9 @@ import {
   Button, 
   useTheme,
   Chip,
-  IconButton,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Slide,
   useMediaQuery
 } from '@mui/material';
-import { TransitionProps } from '@mui/material/transitions';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import LaunchIcon from '@mui/icons-material/Launch';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-
-// Transition for dialog
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement<any, any>;
-  },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
 interface Project {
   id: string;
@@ -40,6 +22,7 @@ interface Project {
   description: string;
   longDescription: string;
   image: string;
+  video?: string; // Optional mp4 video to embed in carousel
   technologies: string[];
   demoUrl?: string;
   githubUrl?: string;
@@ -112,19 +95,20 @@ export default function ProjectsSection() {
     },
     {
       id: 'project-3',
-      title: '3D Product Configurator',
-      description: 'An interactive 3D product configurator allowing users to customize products in real-time.',
-      longDescription: 'This WebGL-based 3D product configurator enables users to customize products with different colors, materials, and components in real-time. The application uses Three.js for rendering and includes a physics engine for realistic simulations. It features a responsive design that works across desktop and mobile devices, with touch and gesture support for intuitive interactions.',
+      title: 'Virtual Chat Assistant',
+      description: 'A virtual chat assistant with AI-powered responses and natural language processing.',
+      longDescription: 'This virtual chat assistant combines a React frontend with a Node.js backend to provide real-time chat functionality. It includes natural language processing capabilities and integrates with OpenAI for AI-powered responses. The application is optimized for performance with caching strategies and responsive design, making it accessible across all devices. It is equipped with my profile as context and could respond about my portfolio.',
       image: './project3.jpg',
-      technologies: ['Three.js', 'WebGL', 'React', 'TypeScript', 'Node.js'],
-      demoUrl: 'https://example.com/demo',
-      githubUrl: 'https://github.com/yourusername/project',
+      video: '/Virtual_Bot.mp4',
+      technologies: ['React', 'TypeScript', 'Node.js', 'Material-UI', 'OpenAI'],
+      demoUrl: 'https://santoshkuidev.github.io/voice-chat-assistant/',
+      githubUrl: 'https://github.com/santoshkuidev/voice-chat-assistant',
       features: [
-        'Real-time 3D rendering with WebGL',
-        'Interactive product customization',
-        'Physics-based simulations for realistic preview',
-        'Cross-platform compatibility',
-        'Touch and gesture support for mobile devices'
+        'Real-time chat functionality',
+        'Natural language processing',
+        'AI-powered responses',
+        'Context-aware responses',
+        'Responsive design'
       ],
       category: 'design'
     },
@@ -155,14 +139,6 @@ export default function ProjectsSection() {
 
   // Get unique categories from projects
   const categories = ['all', ...new Set(projects.map(project => project.category))];
-
-  const handleOpenProject = (project: Project) => {
-    setSelectedProject(project);
-  };
-
-  const handleCloseProject = () => {
-    setSelectedProject(null);
-  };
 
   return (
     <Box
@@ -308,30 +284,49 @@ export default function ProjectsSection() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'stretch',
-                transition: 'transform 0.2s',
-                overflow: 'hidden',
+                borderRight: !isMobile ? '2px solid #e0e0e0' : 'none',
+                borderBottom: isMobile ? '2px solid #e0e0e0' : 'none',
+                p: 0
               }}
             >
-              <CardMedia
-                component="img"
-                sx={{
-                  width: isMobile ? '100%' : '50vw',
-                  height: isMobile ? 200 : '100vh',
-                  objectFit: 'cover',
-                }}
-                image={project.image || "https://source.unsplash.com/random/600x400/?tech"}
-                alt={project.title}
-              />
+              {/* Stacked layout: video/image on top, info below */}
+              <Box sx={{ width: '100%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', height: isMobile ? 240 : 400, overflow: 'hidden' }}>
+                {project.video ? (
+                  <video
+                    src={project.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 0, background: '#000' }}
+                  />
+                ) : (
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                    image={project.image || "https://source.unsplash.com/random/600x400/?tech"}
+                    alt={project.title}
+                  />
+                )}
+              </Box>
               <CardContent
                 sx={{
-                  flexGrow: 1,
+                  flexGrow: 0,
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'center',
+                  justifyContent: 'flex-start',
                   alignItems: isMobile ? 'flex-start' : 'center',
-                  px: isMobile ? 2 : 8,
-                  py: isMobile ? 2 : 0,
-                  width: isMobile ? '100%' : '50vw',
+                  px: isMobile ? 2 : 3,
+                  py: isMobile ? 1 : 2,
+                  width: '100%',
+                  maxHeight: isMobile ? 160 : 220,
+                  overflow: 'auto',
+                  boxSizing: 'border-box',
+                  backgroundColor: theme.palette.background.paper,
                 }}
               >
                 <Typography variant="h3" component="h3" gutterBottom fontWeight={800} textAlign={isMobile ? 'left' : 'center'}>
@@ -340,6 +335,19 @@ export default function ProjectsSection() {
                 <Typography variant="body1" color="text.secondary" paragraph sx={{ mb: 2, textAlign: isMobile ? 'left' : 'center' }}>
                   {project.description}
                 </Typography>
+                {project.demoUrl && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="medium"
+                    href={project.demoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{ fontWeight: 700, mb: 2 }}
+                  >
+                    Live Demo
+                  </Button>
+                )}
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2, justifyContent: isMobile ? 'flex-start' : 'center' }}>
                   {project.technologies.slice(0, 4).map((tech) => (
                     <Chip key={tech} label={tech} size="small" />
@@ -357,48 +365,6 @@ export default function ProjectsSection() {
           </Button>
         </Box>
       </Container>
-
-      <Dialog open={!!selectedProject} onClose={handleCloseProject} maxWidth="lg" fullWidth>
-        <DialogContent sx={{ p: 0 }}>
-          {selectedProject && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', p: 4 }}>
-              <Typography variant="h4" component="h2" gutterBottom>
-                {selectedProject.title}
-              </Typography>
-              <Typography variant="body1" paragraph>
-                {selectedProject.longDescription}
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-                {selectedProject.technologies.map((tech) => (
-                  <Chip key={tech} label={tech} size="small" color="primary" variant="outlined" />
-                ))}
-              </Box>
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                Key Features
-              </Typography>
-              <Box component="ul" sx={{ pl: 2 }}>
-                {selectedProject.features.map((feature, index) => (
-                  <Typography component="li" key={index} paragraph>
-                    {feature}
-                  </Typography>
-                ))}
-              </Box>
-              <Box sx={{ display: 'flex', gap: 2, mt: 4, justifyContent: 'flex-end' }}>
-                {selectedProject.githubUrl && (
-                  <Button variant="outlined" color="primary" startIcon={<GitHubIcon />} href={selectedProject.githubUrl} target="_blank" rel="noopener noreferrer">
-                    View Code
-                  </Button>
-                )}
-                {selectedProject.demoUrl && (
-                  <Button variant="contained" color="primary" startIcon={<LaunchIcon />} href={selectedProject.demoUrl} target="_blank" rel="noopener noreferrer">
-                    Live Demo
-                  </Button>
-                )}
-              </Box>
-            </Box>
-          )}
-        </DialogContent>
-      </Dialog>
     </Box>
   );
 };
