@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           src="https://santoshkuidev.github.io/feedback-widget/feedback-widget.js"
           data-auto-init
-          data-api-url="https://feedback-widget-2p6mfeyjw-santoshs-projects-b7bab93e.vercel.app"
+          data-api-url="https://feedback-widget-nchr7f5lg-santoshs-projects-b7bab93e.vercel.app"
           data-probability="1"
           data-delay="5000"
           data-primary-color="#4a6cf7"
