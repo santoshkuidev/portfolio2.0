@@ -74,8 +74,8 @@ export default function ProjectsCardSection() {
       title: 'n8n inspired Agentic Workflow Builder',
       description: 'A workflow builder that allows users to create and manage workflows for their business processes.',
       longDescription: 'This workflow builder is a React-based application that allows users to create and manage workflows for their business processes. It uses a drag-and-drop interface to build workflows and provides a visual representation of the workflow. The builder includes a library of pre-built workflow templates and allows users to customize and save their own workflows. It also includes a workflow editor that allows users to add, remove, and modify workflow steps. The application is currently in development and is expected to be released in the near future.',
-      image: '/galaxy-bg.jpg',
-      video: '/Agentic_workflow_builder.mp4',
+      image: process.env.NODE_ENV === 'production' ? '/portfolio2.0/galaxy-bg.jpg' : '/galaxy-bg.jpg',
+      video: process.env.NODE_ENV === 'production' ? '/portfolio2.0/Agentic_workflow_builder.mp4' : '/Agentic_workflow_builder.mp4',
       technologies: ['React', 'TypeScript', 'Node.js'],
       demoUrl: 'https://santoshkuidev.github.io/agentic-workflow-builder/',
       githubUrl: 'https://github.com/santoshkuidev/agentic-workflow-builder',
@@ -85,6 +85,27 @@ export default function ProjectsCardSection() {
         'Customizable workflow editor',
         'Workflow management',
         'JSON export/import'
+      ],
+      category: 'web'
+    },
+    {
+      id: 'project-2',
+      title: 'Feedback Widget',
+      description: 'An embeddable feedback widget for websites with a Firebase backend for data storage.',
+      longDescription: 'This feedback widget is a React-based component that can be embedded into any website to collect user feedback. It features a customizable star rating system, comment box, and optional email collection. The widget is designed to be non-intrusive and can be configured to appear after a certain delay or based on user interaction. The backend is built with Node.js and Express, using Firebase for data storage. The widget is fully responsive and works on all devices.',
+      image: process.env.NODE_ENV === 'production' ? '/portfolio2.0/feedback-widget.jpg' : '/feedback-widget.jpg',
+      video: process.env.NODE_ENV === 'production' ? '/portfolio2.0/FeedbackWidget.mp4' : '/FeedbackWidget.mp4',
+      technologies: ['React', 'TypeScript', 'Node.js', 'Express', 'Firebase', 'Vercel'],
+      demoUrl: 'https://santoshkuidev.github.io/portfolio2.0/',
+      githubUrl: 'https://github.com/santoshkuidev/feedback-widget',
+      features: [
+        'Customizable star rating system',
+        'Comment box for detailed feedback',
+        'Optional email collection',
+        'Firebase backend for data storage',
+        'Responsive design for all devices',
+        'Configurable appearance timing',
+        'Dark mode support'
       ],
       category: 'web'
     },
