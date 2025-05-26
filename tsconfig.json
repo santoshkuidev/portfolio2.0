@@ -12,7 +12,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -30,14 +30,9 @@
   },
   "include": [
     "**/*.ts",
-    "**/*.ts",
-    "**/*.tsx",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/types/**/*.ts",
     "docs/types/**/*.ts",
-    "docs/types/**/*.ts",
-    "next-env.d.ts",
     "next-env.d.ts",
     "out/types/**/*.ts"
   ],

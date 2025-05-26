@@ -17,12 +17,11 @@ import {
   Grid,
   Paper
 } from '@mui/material';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import LaunchIcon from '@mui/icons-material/Launch';
+import { ArrowForwardIos as ArrowForwardIosIcon, 
+  ArrowBackIos as ArrowBackIosIcon, 
+  GitHub as GitHubIcon, 
+  Launch as LaunchIcon 
+} from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Project {
@@ -72,40 +71,41 @@ export default function ProjectsCardSection() {
   const projects: Project[] = [
     {
       id: 'project-1',
-      title: 'AI-Powered Analytics Dashboard',
-      description: 'A real-time analytics platform with AI-driven insights and interactive visualizations.',
-      longDescription: 'This enterprise-grade analytics dashboard leverages machine learning algorithms to provide predictive insights and anomaly detection. Built with a React frontend and Node.js backend, it processes millions of data points in real-time and presents them through interactive D3.js visualizations. The system includes role-based access control, customizable dashboards, and automated reporting features.',
+      title: 'n8n inspired Agentic Workflow Builder',
+      description: 'A workflow builder that allows users to create and manage workflows for their business processes.',
+      longDescription: 'This workflow builder is a React-based application that allows users to create and manage workflows for their business processes. It uses a drag-and-drop interface to build workflows and provides a visual representation of the workflow. The builder includes a library of pre-built workflow templates and allows users to customize and save their own workflows. It also includes a workflow editor that allows users to add, remove, and modify workflow steps. The application is currently in development and is expected to be released in the near future.',
       image: '/galaxy-bg.jpg',
-      technologies: ['React', 'TypeScript', 'Node.js', 'D3.js', 'TensorFlow.js', 'WebSockets'],
-      demoUrl: 'https://example.com/demo',
-      githubUrl: 'https://github.com/yourusername/project',
+      video: '/Agentic_workflow_builder.mp4',
+      technologies: ['React', 'TypeScript', 'Node.js'],
+      demoUrl: 'https://santoshkuidev.github.io/agentic-workflow-builder/',
+      githubUrl: 'https://github.com/santoshkuidev/agentic-workflow-builder',
       features: [
-        'Real-time data processing and visualization',
-        'Machine learning-based predictions and anomaly detection',
-        'Interactive dashboards with drag-and-drop customization',
-        'Automated report generation and scheduling',
-        'Role-based access control and user management'
+        'Drag-and-drop interface for building workflows',
+        'Library of pre-built workflow templates',
+        'Customizable workflow editor',
+        'Workflow management',
+        'JSON export/import'
       ],
       category: 'web'
     },
-    {
-      id: 'project-2',
-      title: 'E-Commerce Platform',
-      description: 'A modern e-commerce platform with headless CMS, payment processing, and inventory management.',
-      longDescription: 'This full-featured e-commerce solution combines a Next.js frontend with a headless CMS for content management. It includes Stripe integration for secure payments, real-time inventory tracking, and a comprehensive admin dashboard. The platform is optimized for performance with server-side rendering, image optimization, and efficient caching strategies.',
-      image: '/galaxy-bg.jpg',
-      technologies: ['Next.js', 'GraphQL', 'Stripe', 'Tailwind CSS', 'Prisma', 'PostgreSQL'],
-      demoUrl: 'https://example.com/demo',
-      githubUrl: 'https://github.com/yourusername/project',
-      features: [
-        'Headless CMS for flexible content management',
-        'Secure payment processing with Stripe',
-        'Real-time inventory and order management',
-        'Responsive design with mobile-first approach',
-        'SEO optimization and performance tuning'
-      ],
-      category: 'web'
-    },
+    // {
+    //   id: 'project-2',
+    //   title: 'E-Commerce Platform',
+    //   description: 'A modern e-commerce platform with headless CMS, payment processing, and inventory management.',
+    //   longDescription: 'This full-featured e-commerce solution combines a Next.js frontend with a headless CMS for content management. It includes Stripe integration for secure payments, real-time inventory tracking, and a comprehensive admin dashboard. The platform is optimized for performance with server-side rendering, image optimization, and efficient caching strategies.',
+    //   image: '/galaxy-bg.jpg',
+    //   technologies: ['Next.js', 'GraphQL', 'Stripe', 'Tailwind CSS', 'Prisma', 'PostgreSQL'],
+    //   demoUrl: 'https://example.com/demo',
+    //   githubUrl: 'https://github.com/yourusername/project',
+    //   features: [
+    //     'Headless CMS for flexible content management',
+    //     'Secure payment processing with Stripe',
+    //     'Real-time inventory and order management',
+    //     'Responsive design with mobile-first approach',
+    //     'SEO optimization and performance tuning'
+    //   ],
+    //   category: 'web'
+    // },
     {
       id: 'project-3',
       title: 'Virtual Chat Assistant',
@@ -125,42 +125,42 @@ export default function ProjectsCardSection() {
       ],
       category: 'web'
     },
-    {
-      id: 'project-4',
-      title: 'Mobile Fitness Tracker',
-      description: 'A comprehensive fitness tracking app with workout plans, nutrition tracking, and progress analytics.',
-      longDescription: 'This cross-platform mobile application provides users with personalized workout plans, nutrition tracking, and detailed progress analytics. It integrates with wearable devices for real-time health data collection and offers social features for community engagement. The app includes video tutorials, voice coaching, and AI-powered form correction for exercises.',
-      image: '/galaxy-bg.jpg',
-      technologies: ['React Native', 'TypeScript', 'Firebase', 'Redux', 'TensorFlow Lite', 'HealthKit/Google Fit'],
-      demoUrl: 'https://example.com/demo',
-      githubUrl: 'https://github.com/yourusername/project',
-      features: [
-        'Personalized workout and nutrition planning',
-        'Integration with wearable devices and health platforms',
-        'AI-powered exercise form analysis and correction',
-        'Detailed progress tracking and analytics',
-        'Community features and challenges'
-      ],
-      category: 'mobile'
-    },
-    {
-      id: 'project-5',
-      title: 'Interactive Data Visualization Tool',
-      description: 'A powerful data visualization tool for creating interactive charts, graphs, and dashboards.',
-      longDescription: 'This web-based data visualization platform enables users to create stunning interactive visualizations from various data sources. It supports real-time data streaming, collaborative editing, and a wide range of chart types and customization options. The tool includes an intuitive drag-and-drop interface and advanced filtering capabilities for data exploration.',
-      image: '/galaxy-bg.jpg',
-      technologies: ['D3.js', 'React', 'Node.js', 'WebSockets', 'MongoDB', 'Redis'],
-      demoUrl: 'https://example.com/demo',
-      githubUrl: 'https://github.com/yourusername/project',
-      features: [
-        'Interactive chart creation with drag-and-drop interface',
-        'Support for multiple data sources and formats',
-        'Real-time data streaming and updates',
-        'Collaborative editing and sharing capabilities',
-        'Advanced filtering and data transformation tools'
-      ],
-      category: 'web'
-    }
+    // {
+    //   id: 'project-4',
+    //   title: 'Mobile Fitness Tracker',
+    //   description: 'A comprehensive fitness tracking app with workout plans, nutrition tracking, and progress analytics.',
+    //   longDescription: 'This cross-platform mobile application provides users with personalized workout plans, nutrition tracking, and detailed progress analytics. It integrates with wearable devices for real-time health data collection and offers social features for community engagement. The app includes video tutorials, voice coaching, and AI-powered form correction for exercises.',
+    //   image: '/galaxy-bg.jpg',
+    //   technologies: ['React Native', 'TypeScript', 'Firebase', 'Redux', 'TensorFlow Lite', 'HealthKit/Google Fit'],
+    //   demoUrl: 'https://example.com/demo',
+    //   githubUrl: 'https://github.com/yourusername/project',
+    //   features: [
+    //     'Personalized workout and nutrition planning',
+    //     'Integration with wearable devices and health platforms',
+    //     'AI-powered exercise form analysis and correction',
+    //     'Detailed progress tracking and analytics',
+    //     'Community features and challenges'
+    //   ],
+    //   category: 'mobile'
+    // },
+    // {
+    //   id: 'project-5',
+    //   title: 'Interactive Data Visualization Tool',
+    //   description: 'A powerful data visualization tool for creating interactive charts, graphs, and dashboards.',
+    //   longDescription: 'This web-based data visualization platform enables users to create stunning interactive visualizations from various data sources. It supports real-time data streaming, collaborative editing, and a wide range of chart types and customization options. The tool includes an intuitive drag-and-drop interface and advanced filtering capabilities for data exploration.',
+    //   image: '/galaxy-bg.jpg',
+    //   technologies: ['D3.js', 'React', 'Node.js', 'WebSockets', 'MongoDB', 'Redis'],
+    //   demoUrl: 'https://example.com/demo',
+    //   githubUrl: 'https://github.com/yourusername/project',
+    //   features: [
+    //     'Interactive chart creation with drag-and-drop interface',
+    //     'Support for multiple data sources and formats',
+    //     'Real-time data streaming and updates',
+    //     'Collaborative editing and sharing capabilities',
+    //     'Advanced filtering and data transformation tools'
+    //   ],
+    //   category: 'web'
+    // }
   ];
 
   const filteredProjects = filter === 'all' 
